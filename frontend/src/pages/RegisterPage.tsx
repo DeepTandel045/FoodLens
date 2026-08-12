@@ -16,13 +16,41 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    
+    if (cleanName.length < 2) {
+      setError("Full name must be at least 2 characters.");
+      return;
+    }
+    if (!cleanEmail.includes('@') || !cleanEmail.includes('.') || cleanEmail.length < 5) {
+      setError("Please enter a valid email address (e.g. deep@foodlens.ai).");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
-      await register(email, password, name);
+      await register(cleanName, cleanEmail, password);
       onNavigate('onboarding');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Registration failed. Email may already exist.');
+      const detail = err.response?.data?.detail;
+      let msg = 'Registration failed. Email may already exist.';
+      if (typeof detail === 'string') {
+        msg = detail.replace(/^Value error,\s*/i, '');
+      } else if (Array.isArray(detail)) {
+        msg = detail.map((d: any) => {
+          const raw = d.msg || JSON.stringify(d);
+          return raw.replace(/^Value error,\s*/i, '');
+        }).join('. ');
+      } else if (detail && typeof detail === 'object') {
+        msg = JSON.stringify(detail);
+      }
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -47,7 +75,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate }) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form noValidate onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
             <label className="block text-xs font-extrabold text-[#17201C] uppercase tracking-wider">
               Full Name

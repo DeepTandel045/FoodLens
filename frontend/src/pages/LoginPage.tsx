@@ -15,14 +15,29 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail.includes('@') || !cleanEmail.includes('.') || cleanEmail.length < 5) {
+      setError("Please enter a valid email address (e.g. deep@foodlens.ai).");
+      return;
+    }
     setLoading(true);
     setError('');
     try {
-      await login(email, password);
+      await login(cleanEmail, password);
       onNavigate('dashboard');
     } catch (err: any) {
       const detail = err.response?.data?.detail;
-      const msg = typeof detail === 'string' ? detail : (detail ? JSON.stringify(detail) : 'Invalid email or password. Try demo: deep@foodlens.ai / demo123');
+      let msg = 'Invalid email or password. Try demo: deep@foodlens.ai / demo123';
+      if (typeof detail === 'string') {
+        msg = detail.replace(/^Value error,\s*/i, '');
+      } else if (Array.isArray(detail)) {
+        msg = detail.map((d: any) => {
+          const raw = d.msg || JSON.stringify(d);
+          return raw.replace(/^Value error,\s*/i, '');
+        }).join('. ');
+      } else if (detail && typeof detail === 'object') {
+        msg = JSON.stringify(detail);
+      }
       setError(msg);
     } finally {
       setLoading(false);
@@ -49,7 +64,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form noValidate onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
             <label className="block text-xs font-extrabold text-[#17201C] uppercase tracking-wider">
               Email Address

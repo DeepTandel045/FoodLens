@@ -1,17 +1,38 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
+import re
 
 # --- Auth & User Schemas ---
 
 class UserRegister(BaseModel):
     name: str = Field(..., min_length=2, example="John Doe")
-    email: EmailStr = Field(..., example="john@example.com")
+    email: str = Field(..., example="john@example.com")
     password: str = Field(..., min_length=6, example="secret123")
 
+    @field_validator('email')
+    @classmethod
+    def validate_email(cls, v: str) -> str:
+        if not v or not isinstance(v, str):
+            raise ValueError("Email is required")
+        v = v.strip().lower()
+        if "@" not in v or "." not in v or len(v) < 5:
+            raise ValueError("Please enter a valid email address (e.g. name@domain.com)")
+        return v
+
 class UserLogin(BaseModel):
-    email: EmailStr = Field(..., example="john@example.com")
+    email: str = Field(..., example="john@example.com")
     password: str = Field(..., example="secret123")
+
+    @field_validator('email')
+    @classmethod
+    def validate_email(cls, v: str) -> str:
+        if not v or not isinstance(v, str):
+            raise ValueError("Email is required")
+        v = v.strip().lower()
+        if "@" not in v or "." not in v or len(v) < 5:
+            raise ValueError("Please enter a valid email address (e.g. name@domain.com)")
+        return v
 
 class TokenResponse(BaseModel):
     access_token: str
