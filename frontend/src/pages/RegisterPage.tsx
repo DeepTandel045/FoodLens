@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { UserPlus, Sparkles, AlertCircle } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, AlertCircle } from 'lucide-react';
 
 interface RegisterPageProps {
   onNavigate: (tab: string) => void;
@@ -11,99 +11,111 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
+    setError('');
     try {
-      await register(name, email, password);
+      await register(email, password, name);
       onNavigate('onboarding');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Registration failed. Email might already exist.');
+      setError(err.response?.data?.detail || 'Registration failed. Email may already exist.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4">
-      <div className="glass-panel max-w-md w-full p-8 rounded-3xl border border-slate-700/60 shadow-2xl space-y-6">
+    <div className="min-h-[75vh] flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md card-fresh p-8 space-y-6 bg-white shadow-xl">
         
         <div className="text-center space-y-2">
-          <div className="inline-flex p-3 rounded-2xl bg-emerald-500/10 text-emerald-400 mb-2">
-            <Sparkles className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#164B3A] text-white flex items-center justify-center font-black mx-auto">
+            <Sparkles className="w-6 h-6 text-[#DDF3E7]" />
           </div>
-          <h2 className="text-2xl font-bold text-white">Create FoodLens Account</h2>
-          <p className="text-sm text-slate-400">Unlock personalized food analysis & recommendations</p>
+          <h1 className="text-2xl font-black text-[#17201C] tracking-tight">Create FoodLens Account</h1>
+          <p className="text-xs text-[#5A6561] font-semibold">Join FoodLens for personalized food intelligence</p>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-2">
+          <div className="card-coral p-3 text-xs font-extrabold text-[#E8785D] flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            {error}
+            <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">Full Name</label>
-            <input
-              type="text"
-              required
-              placeholder="Deep Tandel"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm"
-            />
+          <div className="space-y-1">
+            <label className="block text-xs font-extrabold text-[#17201C] uppercase tracking-wider">
+              Full Name
+            </label>
+            <div className="relative">
+              <User className="w-4 h-4 text-[#5A6561] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                required
+                placeholder="Deep Tandel"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-[14px] bg-[#F8F8F4] border border-[#E5E9E6] text-xs font-semibold text-[#17201C] focus:outline-none focus:border-[#164B3A]"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">Email Address</label>
-            <input
-              type="email"
-              required
-              placeholder="deep@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm"
-            />
+          <div className="space-y-1">
+            <label className="block text-xs font-extrabold text-[#17201C] uppercase tracking-wider">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-[#5A6561] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="email"
+                required
+                placeholder="deep@foodlens.ai"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-[14px] bg-[#F8F8F4] border border-[#E5E9E6] text-xs font-semibold text-[#17201C] focus:outline-none focus:border-[#164B3A]"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">Password</label>
-            <input
-              type="password"
-              required
-              placeholder="At least 6 characters"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm"
-            />
+          <div className="space-y-1">
+            <label className="block text-xs font-extrabold text-[#17201C] uppercase tracking-wider">
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-[#5A6561] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-[14px] bg-[#F8F8F4] border border-[#E5E9E6] text-xs font-semibold text-[#17201C] focus:outline-none focus:border-[#164B3A]"
+              />
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-lg shadow-emerald-500/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-[16px] font-extrabold bg-[#164B3A] text-white hover:bg-[#0F3629] transition-all text-xs shadow-md"
           >
-            <UserPlus className="w-4 h-4" />
             {loading ? 'Creating Account...' : 'Continue to Personalization'}
           </button>
         </form>
 
-        <div className="pt-4 border-t border-slate-800 text-center">
-          <p className="text-xs text-slate-400">
-            Already have an account?{' '}
-            <button
-              onClick={() => onNavigate('login')}
-              className="text-white font-bold hover:text-emerald-400 underline"
-            >
-              Sign In
-            </button>
-          </p>
+        <div className="pt-4 border-t border-[#E5E9E6] text-center text-xs text-[#5A6561] font-semibold">
+          Already have an account?{' '}
+          <button
+            onClick={() => onNavigate('login')}
+            className="font-extrabold text-[#164B3A] hover:underline"
+          >
+            Sign In
+          </button>
         </div>
 
       </div>

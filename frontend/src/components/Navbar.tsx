@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   Scan, 
@@ -8,192 +8,246 @@ import {
   User as UserIcon, 
   LogOut, 
   Sparkles,
-  GitCompare,
-  Menu,
-  X
+  GitCompare
 } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
-  setActiveTab: (tab: string) => void;
+  setActiveTab: (tab: string, data?: any) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const { user, logout } = useAuth();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = [
+  const mainNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, authRequired: true },
     { id: 'scan', label: 'Scan Food', icon: Scan, authRequired: false },
+    { id: 'history', label: 'History', icon: HistoryIcon, authRequired: true },
     { id: 'compare', label: 'Compare', icon: GitCompare, authRequired: true },
     { id: 'basket', label: 'Basket', icon: ShoppingBag, authRequired: true },
-    { id: 'history', label: 'History', icon: HistoryIcon, authRequired: true },
+  ];
+
+  const secondaryNavItems = [
+    { id: 'profile', label: 'Profile', icon: UserIcon, authRequired: true },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 glass-panel border-b border-slate-700/50 px-4 py-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <>
+      {/* ========================================================================= */}
+      {/* DESKTOP LEFT SIDEBAR NAVIGATION (Section 12 spec)                         */}
+      {/* ========================================================================= */}
+      <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-[#E5E9E6] p-6 z-40 justify-between">
         
-        {/* Brand Logo */}
+        <div className="space-y-8">
+          {/* Brand Logo */}
+          <div 
+            onClick={() => setActiveTab(user ? 'dashboard' : 'landing')}
+            className="flex items-center gap-3 cursor-pointer group px-2"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-[#164B3A] text-white flex items-center justify-center font-extrabold shadow-md group-hover:scale-105 transition-transform">
+              <Sparkles className="w-5 h-5 text-[#DDF3E7]" />
+            </div>
+            <div>
+              <span className="text-2xl font-black text-[#164B3A] tracking-tight block">FOODLENS</span>
+              <span className="text-[10px] font-extrabold tracking-wider text-[#5A6561] uppercase block -mt-1">
+                Fresh Intelligence
+              </span>
+            </div>
+          </div>
+
+          {/* Navigation Links */}
+          <nav className="space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#5A6561] px-3 block mb-2">
+              Menu
+            </span>
+            {mainNavItems.map((item) => {
+              if (item.authRequired && !user) return null;
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-[16px] text-sm font-bold transition-all text-left ${
+                    isActive
+                      ? 'bg-[#164B3A] text-white shadow-sm'
+                      : 'text-[#5A6561] hover:text-[#17201C] hover:bg-[#F8F8F4]'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-[#DDF3E7]' : 'text-[#5A6561]'}`} />
+                  {item.label}
+                </button>
+              );
+            })}
+
+            <div className="pt-4 border-t border-[#E5E9E6] my-3">
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#5A6561] px-3 block mb-2">
+                Account
+              </span>
+              {secondaryNavItems.map((item) => {
+                if (item.authRequired && !user) return null;
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-[16px] text-sm font-bold transition-all text-left ${
+                      isActive
+                        ? 'bg-[#164B3A] text-white shadow-sm'
+                        : 'text-[#5A6561] hover:text-[#17201C] hover:bg-[#F8F8F4]'
+                    }`}
+                  >
+                    <Icon className={`w-5 h-5 ${isActive ? 'text-[#DDF3E7]' : 'text-[#5A6561]'}`} />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+        </div>
+
+        {/* User Card at Bottom of Sidebar */}
+        {user ? (
+          <div className="pt-4 border-t border-[#E5E9E6] space-y-3">
+            <div 
+              onClick={() => setActiveTab('profile')}
+              className="flex items-center gap-3 p-2.5 rounded-[16px] hover:bg-[#F8F8F4] cursor-pointer transition-colors"
+            >
+              <div className="w-9 h-9 rounded-full bg-[#164B3A] text-white flex items-center justify-center font-black text-sm">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-[#17201C] truncate">{user.name}</p>
+                <p className="text-[10px] font-semibold text-[#164B3A] bg-[#DDF3E7] px-2 py-0.5 rounded-full inline-block mt-0.5 uppercase tracking-wider">
+                  {user.dietary_goal ? user.dietary_goal.replace('_', ' ') : 'Healthy Plan'}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={logout}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[14px] text-xs font-bold text-[#E8785D] hover:bg-[#FEF2F2] transition-colors"
+            >
+              <LogOut className="w-4 h-4" /> Sign Out
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2 pt-4 border-t border-[#E5E9E6]">
+            <button
+              onClick={() => setActiveTab('login')}
+              className="w-full py-3 rounded-[16px] text-sm font-bold text-[#164B3A] bg-[#DDF3E7] hover:bg-[#c9ead8] transition-colors"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => setActiveTab('register')}
+              className="w-full py-3 rounded-[16px] text-sm font-extrabold text-white bg-[#164B3A] hover:bg-[#0F3629] transition-colors shadow-md"
+            >
+              Get Started
+            </button>
+          </div>
+        )}
+      </aside>
+
+      {/* ========================================================================= */}
+      {/* MOBILE TOP HEADER BAR                                                      */}
+      {/* ========================================================================= */}
+      <header className="md:hidden sticky top-0 bg-white border-b border-[#E5E9E6] px-4 py-3 z-40 flex items-center justify-between shadow-xs">
         <div 
           onClick={() => setActiveTab(user ? 'dashboard' : 'landing')}
-          className="flex items-center gap-2 cursor-pointer group"
+          className="flex items-center gap-2 cursor-pointer"
         >
-          <div className="p-2 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 font-bold shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-            <Sparkles className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-xl bg-[#164B3A] text-white flex items-center justify-center font-extrabold text-xs">
+            <Sparkles className="w-4 h-4 text-[#DDF3E7]" />
           </div>
-          <div>
-            <span className="text-xl font-extrabold tracking-tight gradient-text">FoodLens</span>
-            <span className="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              AI Intelligence
-            </span>
+          <span className="text-xl font-black text-[#164B3A] tracking-tight">FOODLENS</span>
+        </div>
+
+        {user ? (
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setActiveTab('profile')}
+              className="w-8 h-8 rounded-full bg-[#164B3A] text-white flex items-center justify-center font-bold text-xs"
+            >
+              {user.name.charAt(0).toUpperCase()}
+            </button>
           </div>
-        </div>
+        ) : (
+          <button
+            onClick={() => setActiveTab('login')}
+            className="text-xs font-bold text-[#164B3A] bg-[#DDF3E7] px-3 py-1.5 rounded-full"
+          >
+            Sign In
+          </button>
+        )}
+      </header>
 
-        {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center gap-1 bg-slate-900/60 p-1.5 rounded-2xl border border-slate-800">
-          {navItems.map((item) => {
-            if (item.authRequired && !user) return null;
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md font-semibold'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Right User Status & Actions */}
-        <div className="hidden md:flex items-center gap-3">
-          {user ? (
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setActiveTab('profile')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-sm transition-all ${
-                  activeTab === 'profile'
-                    ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
-                    : 'border-slate-700 bg-slate-800/40 text-slate-200 hover:bg-slate-800'
-                }`}
-              >
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs">
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-                <span className="font-medium">{user.name}</span>
-              </button>
-              <button
-                onClick={logout}
-                title="Logout"
-                className="p-2 rounded-xl border border-slate-700 hover:border-red-500/50 hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setActiveTab('login')}
-                className="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition-colors"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => setActiveTab('register')}
-                className="px-4 py-2 rounded-xl text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/20 transition-all hover:scale-105"
-              >
-                Get Started
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
+      {/* ========================================================================= */}
+      {/* MOBILE BOTTOM NAVIGATION BAR (Section 12 & Mockup spec)                    */}
+      {/* ========================================================================= */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E9E6] px-4 py-2 z-50 flex items-center justify-around shadow-lg">
+        
+        {/* 1. Home / Dashboard */}
         <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-xl bg-slate-800 text-slate-200"
+          onClick={() => setActiveTab(user ? 'dashboard' : 'landing')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold ${
+            activeTab === 'dashboard' || activeTab === 'landing' ? 'text-[#164B3A]' : 'text-[#5A6561]'
+          }`}
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <LayoutDashboard className="w-5 h-5" />
+          <span>Home</span>
         </button>
-      </div>
 
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-3 pt-3 border-t border-slate-800 flex flex-col gap-2">
-          {navItems.map((item) => {
-            if (item.authRequired && !user) return null;
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setMobileMenuOpen(false);
-                }}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium ${
-                  activeTab === item.id ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                {item.label}
-              </button>
-            );
-          })}
-          {user ? (
-            <>
-              <button
-                onClick={() => {
-                  setActiveTab('profile');
-                  setMobileMenuOpen(false);
-                }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm text-emerald-400 hover:bg-slate-800"
-              >
-                <UserIcon className="w-5 h-5" />
-                Profile ({user.name})
-              </button>
-              <button
-                onClick={() => {
-                  logout();
-                  setMobileMenuOpen(false);
-                }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm text-red-400 hover:bg-slate-800"
-              >
-                <LogOut className="w-5 h-5" />
-                Logout
-              </button>
-            </>
-          ) : (
-            <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-slate-800">
-              <button
-                onClick={() => {
-                  setActiveTab('login');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full py-2.5 text-center text-sm font-medium text-slate-200 bg-slate-800 rounded-xl"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => {
-                  setActiveTab('register');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full py-2.5 text-center text-sm font-bold text-slate-950 bg-emerald-500 rounded-xl"
-              >
-                Get Started
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </nav>
+        {/* 2. History */}
+        {user && (
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`flex flex-col items-center gap-1 text-[10px] font-bold ${
+              activeTab === 'history' ? 'text-[#164B3A]' : 'text-[#5A6561]'
+            }`}
+          >
+            <HistoryIcon className="w-5 h-5" />
+            <span>History</span>
+          </button>
+        )}
+
+        {/* 3. HERO SCAN CTA BUTTON (Center visually dominant button!) */}
+        <button
+          onClick={() => setActiveTab('scan')}
+          className="flex flex-col items-center justify-center -mt-5"
+        >
+          <div className="w-14 h-14 rounded-full bg-[#164B3A] text-white flex items-center justify-center shadow-lg ring-4 ring-[#F8F8F4] active:scale-95 transition-transform">
+            <Scan className="w-7 h-7 text-[#DDF3E7]" />
+          </div>
+          <span className="text-[10px] font-black text-[#164B3A] mt-1">Scan</span>
+        </button>
+
+        {/* 4. Basket */}
+        {user && (
+          <button
+            onClick={() => setActiveTab('basket')}
+            className={`flex flex-col items-center gap-1 text-[10px] font-bold ${
+              activeTab === 'basket' ? 'text-[#164B3A]' : 'text-[#5A6561]'
+            }`}
+          >
+            <ShoppingBag className="w-5 h-5" />
+            <span>Basket</span>
+          </button>
+        )}
+
+        {/* 5. Me / Profile */}
+        <button
+          onClick={() => setActiveTab(user ? 'profile' : 'login')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold ${
+            activeTab === 'profile' || activeTab === 'login' ? 'text-[#164B3A]' : 'text-[#5A6561]'
+          }`}
+        >
+          <UserIcon className="w-5 h-5" />
+          <span>{user ? 'Me' : 'Account'}</span>
+        </button>
+
+      </nav>
+    </>
   );
 };

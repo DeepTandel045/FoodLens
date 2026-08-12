@@ -48,26 +48,26 @@ export const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4 space-y-8">
+    <div className="max-w-4xl mx-auto py-6 px-4 space-y-6">
       
       {/* Header */}
-      <div className="glass-panel p-8 rounded-3xl border border-slate-800 flex items-center gap-6">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 font-bold text-2xl flex items-center justify-center border border-emerald-500/30">
+      <div className="card-fresh p-6 sm:p-8 flex items-center gap-6">
+        <div className="w-16 h-16 rounded-full bg-[#164B3A] text-[#DDF3E7] font-black text-2xl flex items-center justify-center shadow-md shrink-0">
           {user?.name.charAt(0).toUpperCase()}
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">{user?.name}</h1>
-          <p className="text-xs text-slate-400">{user?.email}</p>
-          <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Goal: {dietaryGoal.replace('_', ' ').toUpperCase()}
+          <h1 className="text-2xl font-black text-[#17201C] tracking-tight">{user?.name}</h1>
+          <p className="text-xs text-[#5A6561] font-semibold">{user?.email}</p>
+          <span className="inline-block mt-2 text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-[#DDF3E7] text-[#164B3A] border border-[#164B3A]/20">
+            Active Goal: {dietaryGoal.replace('_', ' ').toUpperCase()}
           </span>
         </div>
       </div>
 
       {/* Health Goal Setting */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <HeartPulse className="w-4 h-4 text-emerald-400" /> Primary Health / Dietary Goal
+      <div className="card-fresh p-6 space-y-4">
+        <h3 className="text-sm font-black text-[#17201C] uppercase tracking-wider flex items-center gap-2">
+          <HeartPulse className="w-4 h-4 text-[#164B3A]" /> Primary Dietary / Health Goal
         </h3>
         <div className="grid sm:grid-cols-2 gap-3">
           {goalsList.map((g) => {
@@ -76,14 +76,14 @@ export const ProfilePage: React.FC = () => {
               <button
                 key={g.id}
                 onClick={() => setDietaryGoal(g.id)}
-                className={`p-3 rounded-xl border text-xs font-semibold text-left transition-all flex items-center justify-between ${
+                className={`p-3.5 rounded-[16px] text-xs font-extrabold text-left transition-all flex items-center justify-between ${
                   isSelected
-                    ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300'
-                    : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-700'
+                    ? 'bg-[#164B3A] text-white shadow-xs'
+                    : 'bg-[#F8F8F4] border border-[#E5E9E6] text-[#5A6561] hover:text-[#17201C]'
                 }`}
               >
                 {g.title}
-                {isSelected && <Check className="w-4 h-4 text-emerald-400" />}
+                {isSelected && <Check className="w-4 h-4 text-[#DDF3E7]" />}
               </button>
             );
           })}
@@ -91,9 +91,9 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* Allergies Setting */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <ShieldAlert className="w-4 h-4 text-red-400" /> Flagged Allergens
+      <div className="card-fresh p-6 space-y-4">
+        <h3 className="text-sm font-black text-[#17201C] uppercase tracking-wider flex items-center gap-2">
+          <ShieldAlert className="w-4 h-4 text-[#E8785D]" /> Flagged Allergens
         </h3>
         <div className="flex flex-wrap gap-2">
           {commonAllergies.map((alg) => {
@@ -103,10 +103,10 @@ export const ProfilePage: React.FC = () => {
               <button
                 key={alg}
                 onClick={() => toggleAllergy(alg)}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
+                className={`px-3.5 py-2 rounded-full text-xs font-extrabold transition-all ${
                   isSelected
-                    ? 'border-red-500 bg-red-500/20 text-red-300'
-                    : 'border-slate-800 bg-slate-900/60 text-slate-400'
+                    ? 'bg-[#FEF2F2] border border-[#E8785D] text-[#E8785D]'
+                    : 'bg-[#F8F8F4] border border-[#E5E9E6] text-[#5A6561]'
                 }`}
               >
                 {alg}
@@ -121,13 +121,13 @@ export const ProfilePage: React.FC = () => {
         <button
           onClick={handleSave}
           disabled={loading}
-          className={`px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all ${
+          className={`px-6 py-3.5 rounded-[18px] font-extrabold text-xs flex items-center gap-2 transition-all shadow-md ${
             saved
-              ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
-              : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950'
+              ? 'bg-[#164B3A] text-white'
+              : 'bg-[#164B3A] text-white hover:bg-[#0F3629]'
           }`}
         >
-          <Save className="w-4 h-4" />
+          <Save className="w-4 h-4 text-[#DDF3E7]" />
           {saved ? 'Settings Saved!' : loading ? 'Saving...' : 'Save Profile Changes'}
         </button>
       </div>

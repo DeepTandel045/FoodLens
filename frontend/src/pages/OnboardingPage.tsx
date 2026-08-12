@@ -1,47 +1,42 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ShieldAlert, Check, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, Check } from 'lucide-react';
 
 interface OnboardingPageProps {
   onNavigate: (tab: string) => void;
 }
 
 export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onNavigate }) => {
-  const { user, updateProfile } = useAuth();
-  const [dietaryGoal, setDietaryGoal] = useState('general_healthy_eating');
-  const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
-  const [selectedPrefs] = useState<string[]>([]);
+  const { updateProfile } = useAuth();
+  const [dietaryGoal, setDietaryGoal] = useState('diabetes_oriented');
+  const [allergies, setAllergies] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const goalsList = [
-    { id: 'general_healthy_eating', title: 'General Healthy Eating', desc: 'Balanced nutrition analysis across all food groups' },
-    { id: 'diabetes_oriented', title: 'Diabetes-Oriented', desc: 'Focus on low-glycemic foods, low sugar, and fiber balance' },
-    { id: 'weight_management', title: 'Weight Management', desc: 'Caloric density control, low sugar, and satiety metrics' },
-    { id: 'high_protein', title: 'High Protein / Fitness', desc: 'Muscle building emphasis and high protein density' },
-    { id: 'low_sodium', title: 'Low Sodium / Blood Pressure', desc: 'Sodium caps and salt warning indicators' },
-    { id: 'heart_conscious', title: 'Heart Conscious', desc: 'Saturated & trans-fat reduction' },
-    { id: 'vegetarian', title: 'Vegetarian', desc: 'Exclude meat, poultry, fish, and animal gelatin' },
-    { id: 'vegan', title: 'Vegan', desc: 'Exclude all animal products including dairy & eggs' },
+    { id: 'general_healthy_eating', title: 'General Healthy Eating', desc: 'Standard balanced dietary guidelines.' },
+    { id: 'diabetes_oriented', title: 'Diabetes-Oriented', desc: 'Focus on low glycemic index, low sugar, & high fiber.' },
+    { id: 'weight_management', title: 'Weight Management', desc: 'Calorie conscious with optimal protein density.' },
+    { id: 'high_protein', title: 'High Protein / Fitness', desc: 'Maximizes protein intake per serving.' },
+    { id: 'low_sodium', title: 'Low Sodium', desc: 'Strictly penalizes high sodium content for heart health.' },
   ];
 
-  const commonAllergies = ['Peanuts', 'Gluten / Wheat', 'Milk / Dairy', 'Soy', 'Eggs', 'Tree Nuts', 'Shellfish', 'Sesame'];
+  const commonAllergies = ['Peanuts', 'Gluten', 'Milk', 'Soy', 'Eggs', 'Tree Nuts', 'Shellfish', 'Sesame'];
 
-  const toggleAllergy = (allergen: string) => {
-    const clean = allergen.split('/')[0].trim().toLowerCase();
-    if (selectedAllergies.includes(clean)) {
-      setSelectedAllergies(selectedAllergies.filter(a => a !== clean));
+  const toggleAllergy = (alg: string) => {
+    const clean = alg.toLowerCase();
+    if (allergies.includes(clean)) {
+      setAllergies(allergies.filter(a => a !== clean));
     } else {
-      setSelectedAllergies([...selectedAllergies, clean]);
+      setAllergies([...allergies, clean]);
     }
   };
 
-  const handleSubmit = async () => {
+  const handleFinish = async () => {
     setLoading(true);
     try {
       await updateProfile({
         dietary_goal: dietaryGoal,
-        allergies: selectedAllergies,
-        preferences: selectedPrefs
+        allergies: allergies
       });
       onNavigate('dashboard');
     } catch (err) {
@@ -52,76 +47,60 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onNavigate }) =>
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4 space-y-8">
+    <div className="max-w-2xl mx-auto py-10 px-4 space-y-8">
       
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-extrabold text-white">
-          Personalize Your <span className="gradient-text">FoodLens Profile</span>
-        </h1>
-        <p className="text-slate-400 text-sm max-w-xl mx-auto">
-          Welcome {user?.name || ''}! Select your primary nutritional goals and allergy restrictions so FoodLens can calculate tailored suitability scores.
-        </p>
+        <div className="w-12 h-12 rounded-2xl bg-[#164B3A] text-white flex items-center justify-center font-black mx-auto">
+          <Sparkles className="w-6 h-6 text-[#DDF3E7]" />
+        </div>
+        <h1 className="text-3xl font-black text-[#17201C] tracking-tight">Personalize Your FoodLens Engine</h1>
+        <p className="text-xs text-[#5A6561] font-semibold">Select your health goals so our scoring algorithm can tailor product scores for you.</p>
       </div>
 
-      {/* Step 1: Select Primary Goal */}
-      <div className="glass-panel p-8 rounded-3xl border border-slate-800 space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold">1</div>
-          <div>
-            <h3 className="text-lg font-bold text-white">Choose Your Primary Health / Dietary Goal</h3>
-            <p className="text-xs text-slate-400">Scores will dynamically weight nutritional factors against this goal</p>
-          </div>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-4">
+      {/* Goal Selection */}
+      <div className="card-fresh p-6 space-y-4">
+        <h3 className="text-xs font-black text-[#17201C] uppercase tracking-wider">Select Primary Goal</h3>
+        <div className="space-y-3">
           {goalsList.map((g) => {
             const isSelected = dietaryGoal === g.id;
             return (
-              <div
+              <button
                 key={g.id}
                 onClick={() => setDietaryGoal(g.id)}
-                className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                className={`w-full p-4 rounded-[16px] text-left transition-all border flex items-center justify-between ${
                   isSelected
-                    ? 'border-emerald-500 bg-emerald-500/10 shadow-lg shadow-emerald-500/10'
-                    : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
+                    ? 'border-2 border-[#164B3A] bg-[#DDF3E7]/40 text-[#17201C]'
+                    : 'border-[#E5E9E6] bg-[#F8F8F4] text-[#5A6561] hover:text-[#17201C]'
                 }`}
               >
-                <div className="flex items-start justify-between">
-                  <h4 className={`font-bold text-sm ${isSelected ? 'text-emerald-400' : 'text-white'}`}>{g.title}</h4>
-                  {isSelected && <Check className="w-5 h-5 text-emerald-400 shrink-0" />}
+                <div>
+                  <h4 className="font-extrabold text-sm text-[#17201C]">{g.title}</h4>
+                  <p className="text-xs text-[#5A6561] font-medium">{g.desc}</p>
                 </div>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">{g.desc}</p>
-              </div>
+                {isSelected && <Check className="w-5 h-5 text-[#164B3A]" />}
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* Step 2: Select Allergens */}
-      <div className="glass-panel p-8 rounded-3xl border border-slate-800 space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-teal-500/20 text-teal-400 font-bold">2</div>
-          <div>
-            <h3 className="text-lg font-bold text-white">Select Any Known Allergies or Exclusions</h3>
-            <p className="text-xs text-slate-400">Products containing selected allergens will trigger critical score penalties</p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-3">
+      {/* Allergies Selection */}
+      <div className="card-fresh p-6 space-y-4">
+        <h3 className="text-xs font-black text-[#17201C] uppercase tracking-wider">Allergens to Exclude</h3>
+        <div className="flex flex-wrap gap-2">
           {commonAllergies.map((alg) => {
-            const clean = alg.split('/')[0].trim().toLowerCase();
-            const isSelected = selectedAllergies.includes(clean);
+            const clean = alg.toLowerCase();
+            const isSelected = allergies.includes(clean);
             return (
               <button
                 key={alg}
                 onClick={() => toggleAllergy(alg)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-full text-xs font-extrabold transition-all ${
                   isSelected
-                    ? 'border-red-500 bg-red-500/20 text-red-300 shadow-lg shadow-red-500/10'
-                    : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'
+                    ? 'bg-[#FEF2F2] border border-[#E8785D] text-[#E8785D]'
+                    : 'bg-[#F8F8F4] border border-[#E5E9E6] text-[#5A6561]'
                 }`}
               >
-                <ShieldAlert className="w-4 h-4" />
                 {alg}
               </button>
             );
@@ -129,15 +108,13 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onNavigate }) =>
         </div>
       </div>
 
-      <div className="flex justify-end">
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="px-8 py-4 rounded-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-xl shadow-emerald-500/25 hover:scale-105 transition-all flex items-center gap-2 text-base"
-        >
-          {loading ? 'Saving Profile...' : 'Complete Onboarding & Go to Dashboard'} <ArrowRight className="w-5 h-5" />
-        </button>
-      </div>
+      <button
+        onClick={handleFinish}
+        disabled={loading}
+        className="w-full py-4 rounded-[18px] font-extrabold bg-[#164B3A] text-white hover:bg-[#0F3629] transition-all text-sm flex items-center justify-center gap-2 shadow-lg"
+      >
+        {loading ? 'Setting up Profile...' : 'Complete & Launch Dashboard'} <ArrowRight className="w-4 h-4 text-[#DDF3E7]" />
+      </button>
 
     </div>
   );

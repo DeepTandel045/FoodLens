@@ -2,64 +2,124 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    
+    /* Fresh Intelligence Color Palette */
+    --color-primary: #164B3A;      /* Deep Forest Green */
+    --color-primary-hover: #0F3629;
+    --color-secondary: #DDF3E7;    /* Fresh Mint */
+    --color-bg-warm: #F8F8F4;       /* Warm Off-White */
+    --color-surface: #FFFFFF;       /* Pure White Cards */
+    --color-text-main: #17201C;     /* Deep Charcoal */
+    --color-text-muted: #5A6561;    /* Muted Charcoal */
+    --color-warning: #F2B84B;       /* Amber */
+    --color-concern: #E8785D;       /* Coral */
+    --color-border-subtle: #E2E7E3;  /* Subtle Soft Border */
   }
 
   body {
-    background-color: #0f172a;
-    color: #f8fafc;
+    background-color: var(--color-bg-warm);
+    color: var(--color-text-main);
     font-family: var(--font-sans);
     overflow-x: hidden;
     min-height: 100vh;
   }
 }
 
-/* Glassmorphism & Custom Animations */
-.glass-panel {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+/* Premium Soft Card & Surface System */
+.card-fresh {
+  background-color: #ffffff;
+  border: 1px solid #E5E9E6;
+  border-radius: 22px;
+  box-shadow: 0 4px 20px -2px rgba(22, 75, 58, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-panel-glow {
-  background: rgba(30, 41, 59, 0.8);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+.card-fresh:hover {
+  box-shadow: 0 10px 28px -4px rgba(22, 75, 58, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #34d399 0%, #3b82f6 50%, #8b5cf6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.card-mint {
+  background-color: #DDF3E7;
+  border: 1px solid rgba(22, 75, 58, 0.12);
+  border-radius: 22px;
 }
 
-.score-gradient-high {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+.card-forest {
+  background-color: #164B3A;
+  color: #ffffff;
+  border-radius: 22px;
 }
 
-.score-gradient-medium {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+.card-amber {
+  background-color: #FFFBEB;
+  border: 1px solid rgba(242, 184, 75, 0.3);
+  border-radius: 20px;
 }
 
-.score-gradient-low {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+.card-coral {
+  background-color: #FEF2F2;
+  border: 1px solid rgba(232, 120, 93, 0.3);
+  border-radius: 20px;
 }
 
-/* Scrollbar styling */
+/* Typography Gradient & Accents */
+.text-forest {
+  color: #164B3A;
+}
+
+.bg-forest {
+  background-color: #164B3A;
+}
+
+.bg-mint {
+  background-color: #DDF3E7;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #F8F8F4;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
+  background: #C4D5CB;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #164B3A;
+}
+
+/* Score Badges & Scale Colors */
+.score-badge-green {
+  background-color: #164B3A;
+  color: #FFFFFF;
+}
+
+.score-badge-mint-green {
+  background-color: #DDF3E7;
+  color: #164B3A;
+  border: 1px solid rgba(22, 75, 58, 0.2);
+}
+
+.score-badge-amber {
+  background-color: #F2B84B;
+  color: #17201C;
+}
+
+.score-badge-coral {
+  background-color: #E8785D;
+  color: #FFFFFF;
+}
+
+/* Camera Frame Overlay Pulse */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.01); }
+}
+
+.camera-frame-pulse {
+  animation: pulse-subtle 2.5s infinite ease-in-out;
 }

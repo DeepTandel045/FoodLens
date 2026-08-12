@@ -57,39 +57,39 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-      <div className="glass-panel max-w-lg w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-700">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+      <div className="w-full max-w-lg bg-white rounded-[24px] overflow-hidden shadow-2xl border border-[#E5E9E6]">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-800">
+        <div className="flex items-center justify-between p-5 border-b border-[#E5E9E6]">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
-              <Sparkles className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-[#DDF3E7] text-[#164B3A]">
+              <Sparkles className="w-5 h-5 text-[#164B3A]" />
             </div>
-            <h3 className="text-lg font-bold text-white">Scan Food Product</h3>
+            <h3 className="text-lg font-black text-[#17201C]">Scan Food Product</h3>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800"
+            className="p-2 rounded-full text-[#5A6561] hover:bg-[#F8F8F4]"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-slate-800 bg-slate-900/50">
+        <div className="flex border-b border-[#E5E9E6] bg-[#F8F8F4]">
           <button
             onClick={() => setActiveTab('camera')}
-            className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-2 transition-colors ${
-              activeTab === 'camera' ? 'border-b-2 border-emerald-500 text-emerald-400 bg-slate-800/40' : 'text-slate-400'
+            className={`flex-1 py-3 text-xs font-extrabold flex items-center justify-center gap-2 transition-colors ${
+              activeTab === 'camera' ? 'border-b-2 border-[#164B3A] text-[#164B3A] bg-white' : 'text-[#5A6561]'
             }`}
           >
             <Camera className="w-4 h-4" /> Camera Scanner
           </button>
           <button
             onClick={() => setActiveTab('manual')}
-            className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-2 transition-colors ${
-              activeTab === 'manual' ? 'border-b-2 border-emerald-500 text-emerald-400 bg-slate-800/40' : 'text-slate-400'
+            className={`flex-1 py-3 text-xs font-extrabold flex items-center justify-center gap-2 transition-colors ${
+              activeTab === 'manual' ? 'border-b-2 border-[#164B3A] text-[#164B3A] bg-white' : 'text-[#5A6561]'
             }`}
           >
             <Keyboard className="w-4 h-4" /> Enter Barcode
@@ -97,24 +97,24 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 space-y-4">
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+            <div className="p-3 rounded-xl bg-[#FEF2F2] border border-[#E8785D]/30 text-[#E8785D] text-xs font-bold">
               {error}
             </div>
           )}
 
           {activeTab === 'camera' ? (
-            <div>
-              <p className="text-xs text-slate-400 text-center mb-3">
-                Align food package barcode inside camera box below
+            <div className="space-y-2">
+              <p className="text-xs text-[#5A6561] text-center font-semibold">
+                Align food package barcode inside camera viewfinder below
               </p>
-              <div id="barcode-reader" className="w-full rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 min-h-[260px]"></div>
+              <div id="barcode-reader" className="w-full rounded-[18px] overflow-hidden border border-[#E5E9E6] bg-black min-h-[260px]"></div>
             </div>
           ) : (
             <form onSubmit={handleManualSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">
+                <label className="block text-xs font-black text-[#17201C] mb-2 uppercase tracking-wider">
                   Product Barcode (GTIN / EAN-13 / UPC)
                 </label>
                 <input
@@ -122,13 +122,13 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen
                   placeholder="e.g. 8901058852387"
                   value={manualBarcode}
                   onChange={(e) => setManualBarcode(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-lg"
+                  className="w-full px-4 py-3 rounded-xl bg-[#F8F8F4] border border-[#E5E9E6] text-[#17201C] font-mono text-lg placeholder-[#5A6561] focus:outline-none focus:border-[#164B3A]"
                   autoFocus
                 />
               </div>
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl font-bold bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 transition-all"
+                className="w-full py-3.5 rounded-[16px] font-extrabold bg-[#164B3A] text-white hover:bg-[#0F3629] transition-all text-xs shadow-md"
               >
                 Lookup Barcode
               </button>
